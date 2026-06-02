@@ -226,3 +226,28 @@ void loop() {
 
   delay(500);
 }
+---
+```
+## 5. Procedimentos de Reprodução e Testes
+
+Para viabilizar a replicação do nó de iluminação inteligente, o repositório disponibiliza todos os artefatos necessários. O procedimento de teste é dividido entre a configuração do firmware e a auditoria de dados em tempo real, garantindo a validação da telemetria MQTT.
+
+### Requisitos de Ambiente
+* **Hardware:** Microcontrolador ESP32 DevKit V1 (ou compatível), Módulo Sensor PIR HC-SR501, Transdutor Piezoelétrico e LED de potência com resistor limitador (330Ω).
+* **Software:** Ambiente de desenvolvimento **Arduino IDE** com as bibliotecas `WiFi.h` e `PubSubClient.h` instaladas via gerenciador de bibliotecas.
+* **Rede:** Acesso a uma rede Wi-Fi ativa com banda de 2.4 GHz e conectividade à Internet para comunicação com o broker MQTT.
+
+### Passo a Passo para Instalação
+1. **Download do Código:** Acesse o botão **"<> Code"** no topo deste repositório e selecione **"Download ZIP"** para obter o projeto completo, ou clone o diretório localmente via Git:
+   `git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git`
+2. **Configuração:** Abra o arquivo `firmware.ino` no Arduino IDE. Altere as constantes `ssid` e `password` com as credenciais da sua rede Wi-Fi local.
+3. **Compilação e Upload:** Conecte o ESP32 ao computador via cabo USB, selecione a porta COM correta no menu *Ferramentas* e realize o upload do firmware para a placa.
+4. **Monitoramento:** Abra o *Monitor Serial* da Arduino IDE (configurado em 115200 bps) para verificar a inicialização do handshake Wi-Fi e a conexão com o broker `broker.hivemq.com`.
+
+### Auditoria de Telemetria (Protocolo MQTT)
+Para validar o envio dos dados sem a necessidade de um servidor próprio, o projeto utiliza um broker público. O acompanhamento dos pacotes pode ser realizado através do [HiveMQ Web Client](http://www.hivemq.com/demos/websocket-client/):
+
+* **Configuração do Cliente:** 1. Acesse o site do cliente Web do HiveMQ.
+    2. Clique em **"Connect"** (mantendo as configurações padrão de porta 8000/WebSockets).
+    3. Em **"Subscriptions"**, clique em **"Add New Topic Subscription"** e insira o tópico: `cidade/postes/01/telemetria`.
+* **Validação:** A cada 5 segundos, o nó publicará um objeto JSON contendo o status de `presenca`, a `tensao` gerada e o `estado` operacional. Caso os dados apareçam na janela do cliente web, o nó está corretamente integrado à infraestrutura de rede IoT.
